@@ -120,6 +120,8 @@ class AvoidReuseTest(BitcoinTestFramework):
         assert_raises_rpc_error(-8, "Wallet flag is already set to false", self.nodes[0].setwalletflag, 'avoid_reuse', False)
         assert_raises_rpc_error(-8, "Wallet flag is already set to true", self.nodes[1].setwalletflag, 'avoid_reuse', True)
 
+        assert_raises_rpc_error(-8, "Unknown wallet flag: abc", self.nodes[0].setwalletflag, 'abc', True)
+
         # Create a wallet with avoid reuse, and test that disabling it afterwards persists
         self.nodes[1].createwallet(wallet_name="avoid_reuse_persist", avoid_reuse=True)
         w = self.nodes[1].get_wallet_rpc("avoid_reuse_persist")
@@ -193,7 +195,7 @@ class AvoidReuseTest(BitcoinTestFramework):
         # getbalances should show no used, 10 btc trusted
         assert_balances(self.nodes[1], mine={"used": 0, "trusted": 10})
         # node 0 should not show a used entry, as it does not enable avoid_reuse
-        assert("used" not in self.nodes[0].getbalances()["mine"])
+        assert "used" not in self.nodes[0].getbalances()["mine"]
 
         self.nodes[1].sendtoaddress(retaddr, 5)
         self.generate(self.nodes[0], 1)
